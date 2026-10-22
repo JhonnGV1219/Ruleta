@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ruleta: fuentes del conocimiento</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+:root{--bg:#eef1f7;--surface:#fff;--ink:#141a33;--muted:#5a6384;--line:#d5dbea;--ok:#1f8f5f;--bad:#c8344a;
+--c0:#2f9e6b;--c1:#3b5bdb;--c2:#e8a317;--c3:#9c4dcc;--c4:#d6336c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1426;--surface:#1a2140;--ink:#eef1fb;--muted:#9aa5cf;--line:#2c3562;--ok:#4cc98f;--bad:#ff7088}}
+:root[data-theme="dark"]{--bg:#0f1426;--surface:#1a2140;--ink:#eef1fb;--muted:#9aa5cf;--line:#2c3562;--ok:#4cc98f;--bad:#ff7088}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Atkinson Hyperlegible",system-ui,sans-serif}
+h1,h2,.btn{font-family:"Bricolage Grotesque",system-ui,sans-serif}
+main{max-width:1060px;margin:0 auto;padding:24px 18px 48px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+h1{font-size:clamp(28px,5vw,46px);line-height:1.05;margin:0;font-weight:800;letter-spacing:-.02em}
+header p{margin:6px 0 0;color:var(--muted);max-width:46ch}
+.stats{display:flex;gap:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 14px;text-align:center;min-width:78px}
+.stat b{display:block;font:800 24px "Bricolage Grotesque",sans-serif}
+.stat span{font-size:13px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:minmax(280px,440px) 1fr;gap:28px;align-items:start}
+@media(max-width:820px){.grid{grid-template-columns:1fr}}
+.wheelbox{position:relative;width:100%;max-width:440px;margin:0 auto}
+.pointer{position:absolute;left:50%;top:-6px;width:34px;height:42px;transform:translateX(-50%);z-index:2;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
+#wheel{width:100%;height:auto;display:block;transition:transform 4.6s cubic-bezier(.12,.7,.1,1)}
+.hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:92px;height:92px;border-radius:50%;border:4px solid var(--bg);background:var(--ink);color:var(--bg);font-weight:800;font-size:17px;cursor:pointer}
+.hub:disabled{opacity:.6;cursor:default}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;min-height:360px;border-top:6px solid var(--accent,var(--line))}
+.panel h2{margin:0 0 4px;font-size:25px;line-height:1.2}
+.tag{display:inline-block;font-weight:700;color:var(--accent,var(--muted));margin-bottom:6px}
+.idle{color:var(--muted)}
+.idle ul{padding-left:20px}
+.opts{display:grid;gap:10px;margin:16px 0}
+.opt{text-align:left;background:var(--bg);border:2px solid var(--line);color:var(--ink);border-radius:10px;padding:12px 14px;font:inherit;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,var(--surface))}
+.opt.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,var(--surface))}
+.fb{border-left:4px solid var(--accent);padding:4px 0 4px 14px;margin:10px 0}
+.fb strong{display:block}
+.btn{background:var(--accent,var(--ink));color:#fff;border:0;border-radius:10px;padding:11px 20px;font-weight:700;font-size:16px;cursor:pointer;margin-top:6px}
+.dots{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.dot{display:flex;align-items:center;gap:7px;font-size:14px;background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:5px 12px}
+.dot i{width:12px;height:12px;border-radius:50%;background:var(--c)}
+.dot em{font-style:normal;color:var(--muted)}
+button:focus-visible{outline:3px solid var(--c1);outline-offset:2px}
+.end{text-align:center;padding:30px 0}
+.end b{font:800 56px "Bricolage Grotesque",sans-serif}
+.ref{margin-top:28px;font-size:14px;color:var(--muted)}
+@media(prefers-reduced-motion:reduce){#wheel{transition-duration:.4s}}
+</style>
+</head>
+<body>
+<main>
+<header>
+ <div>
+  <h1>Ruleta de las fuentes del conocimiento</h1>
+  <p>Gira la ruleta, responde la pregunta del tema que salga y descubre cuánto sabes.</p>
+  <h2>Integrantes:</h2>
+  <li style="list-style-type: none;">
+    <p>Chicaiza Daniela</p>
+    <p>Chicaiza Telmo</p>
+  </li>
+ </div>
+ <div class="stats" aria-live="polite">
+  <div class="stat"><b id="sScore">0</b><span>aciertos</span></div>
+  <div class="stat"><b id="sTotal">0</b><span>respondidas</span></div>
+  <div class="stat"><b id="sStreak">0</b><span>racha</span></div>
+ </div>
+</header>
+
+<div class="grid">
+ <div class="wheelbox">
+  <svg class="pointer" viewBox="0 0 34 42" aria-hidden="true"><path d="M17 42 2 8a17 17 0 1 1 30 0z" fill="#141a33" stroke="#fff" stroke-width="2"/><circle cx="17" cy="15" r="5" fill="#fff"/></svg>
+  <svg id="wheel" viewBox="-205 -205 410 410" role="img" aria-label="Ruleta con cinco temas"></svg>
+  <button class="hub" id="spin" aria-label="Girar la ruleta">GIRAR</button>
+ </div>
+ <section class="panel" id="panel" aria-live="polite"></section>
+</div>
+
+<div class="dots" id="dots"></div>
+<p class="ref">Contenido basado en Sucari et al. (2025), Quirós Valverde (2021) y Gandarilla et al. (2024).</p>
+</main>
+
+<script>
+const T=[
+{n:"Experiencia",c:"var(--c0)",q:[
+ {p:"¿Cómo se adquiere el conocimiento por experiencia?",o:["Mediante la vivencia directa de hechos y la observación de los resultados de nuestras acciones","Aceptando lo que afirma un experto","Únicamente por deducción lógica","Recordando datos aprendidos"],a:0,e:"La experiencia surge cuando la persona interactúa con el entorno y observa lo que resulta de sus acciones (Sucari et al., 2025)."},
+ {p:"Una persona aprende que una planta necesita agua y luz tras cuidarla durante semanas. ¿Qué fuente usó?",o:["Testimonio","Experiencia","Razón","Memoria"],a:1,e:"Aprendió viviendo la situación y observando el crecimiento de la planta: es conocimiento por experiencia."},
+ {p:"¿Qué característica corresponde a la experiencia?",o:["Siempre es idéntica en todas las personas","No requiere interactuar con el entorno","Permite aprender mediante la repetición y la comprobación","Depende solo de la palabra de otros"],a:2,e:"Es una fuente práctica y cotidiana que se afianza repitiendo y comprobando (Quirós Valverde, 2021)."},
+ {p:"La experiencia sirve de base para…",o:["Solo para el olvido","El conocimiento empírico y científico","Únicamente las matemáticas puras","Las ilusiones ópticas"],a:1,e:"La experiencia es la base del conocimiento empírico y científico (Quirós Valverde, 2021)."}]},
+{n:"Razón",c:"var(--c1)",q:[
+ {p:"¿Qué es la razón como fuente del conocimiento?",o:["La capacidad de conservar recuerdos","La capacidad de captar el mundo con los sentidos","La capacidad mental de analizar, comparar y relacionar ideas para llegar a conclusiones lógicas","Aceptar lo que dice una fuente confiable"],a:2,e:"La razón organiza y evalúa la información mediante procesos lógicos (Sucari et al., 2025)."},
+ {p:"¿Cuál de estos es un proceso propio de la razón?",o:["La deducción","El olvido","La percepción visual","El rumor"],a:0,e:"La razón desarrolla procesos como la deducción, la inducción y la argumentación."},
+ {p:"Todos los seres humanos necesitan agua y María es un ser humano; por tanto, María necesita agua. ¿Qué fuente se usó?",o:["Percepción","Testimonio","Memoria","Razón"],a:3,e:"Es una deducción: de premisas generales se llega a una conclusión lógica."},
+ {p:"¿De qué depende que la razón llegue a buenas conclusiones?",o:["De que las premisas o datos iniciales sean correctos","De que se razone muy rápido","De que nadie las discuta","De que provengan de una vivencia propia"],a:0,e:"Si las premisas son falsas, la conclusión puede ser inválida aunque el razonamiento sea ordenado (Gandarilla et al., 2024)."}]},
+{n:"Percepción",c:"var(--c2)",q:[
+ {p:"¿Mediante qué conocemos el mundo en la percepción?",o:["Mediante libros y docentes","Mediante los sentidos: vista, oído, tacto, olfato y gusto","Mediante silogismos","Mediante recuerdos"],a:1,e:"La percepción capta objetos, sonidos, colores y otras características del entorno (Sucari et al., 2025)."},
+ {p:"¿Qué puede afectar la percepción?",o:["Solo la edad del documento","Nada, siempre es exacta","La cantidad de libros leídos","Ilusiones, distancia, luz o el estado emocional"],a:3,e:"Por eso debe complementarse con la razón y la experiencia para evitar errores."},
+ {p:"Ves el cielo nublado y piensas que lloverá. ¿Cómo confirmarlo mejor?",o:["Observando otros indicios o consultando el pronóstico","Cerrando los ojos","Confiando solo en la primera impresión","Olvidándolo"],a:0,e:"La percepción es inmediata pero no siempre suficiente; conviene contrastarla."},
+ {p:"La percepción es…",o:["Una fuente que nunca falla","La primera forma de contacto con la realidad","Un conocimiento sin información sensorial","Lo mismo que el testimonio"],a:1,e:"Proporciona información sensorial directa (Sucari et al., 2025)."}]},
+{n:"Memoria",c:"var(--c3)",q:[
+ {p:"¿Qué permite la memoria?",o:["Observar hechos nuevos","Conservar, almacenar y recuperar información adquirida en el pasado","Calcular conclusiones lógicas","Aceptar afirmaciones ajenas"],a:1,e:"La memoria conserva lo aprendido por otras fuentes (Sucari et al., 2025)."},
+ {p:"¿La memoria siempre produce conocimiento nuevo?",o:["Sí, siempre","Solo cuando se duerme","No necesariamente: sobre todo conserva lo ya aprendido","Nunca conserva nada"],a:2,e:"No siempre genera conocimiento nuevo, pero hace posible utilizar el que ya se tiene."},
+ {p:"¿Por qué puede fallar la memoria?",o:["Por exceso de luz","Por ilusiones ópticas","Por falta de premisas","Por olvido, confusión o distorsión de los recuerdos"],a:3,e:"Los recuerdos pueden perderse o deformarse (Gandarilla et al., 2024)."},
+ {p:"Un estudiante recuerda reglas gramaticales de clases anteriores y las aplica en un ensayo. ¿Qué fuente usa?",o:["Memoria","Percepción","Testimonio","Razón"],a:0,e:"Recupera información aprendida antes: es un uso de la memoria."}]},
+{n:"Testimonio",c:"var(--c4)",q:[
+ {p:"¿Qué es el testimonio?",o:["Conocimiento obtenido solo con los sentidos","Conocimiento que se recibe de otra persona por la palabra hablada, escrita o por medios de comunicación","Conocimiento deducido de premisas propias","Conocimiento que se olvida con el tiempo"],a:1,e:"Consiste en aceptar una afirmación porque viene de una fuente competente y confiable (Sucari et al., 2025)."},
+ {p:"¿Qué se debe evaluar en una fuente de testimonio?",o:["Su color y tamaño","Cuántas veces se repite","Su credibilidad, competencia y honestidad","Nada: siempre es verdadera"],a:2,e:"Aceptar un testimonio exige juzgar la confiabilidad de quien lo emite (Gandarilla et al., 2024)."},
+ {p:"Conoces eventos históricos y descubrimientos científicos gracias a libros, docentes y documentales. ¿Qué fuente es?",o:["Percepción","Razón","Testimonio","Experiencia directa"],a:2,e:"No presenciaste esos hechos: los conoces porque otros te los transmitieron."},
+ {p:"¿Por qué es esencial el testimonio?",o:["Porque permite conocer hechos que no podemos observar personalmente","Porque elimina la necesidad de pensar","Porque reemplaza a los sentidos","Porque solo sirve en la vida cotidiana"],a:0,e:"Es clave en la educación, la ciencia, la historia y los medios de comunicación."}]}
+];
+const N=T.length,SEG=360/N;
+const st={score:0,total:0,streak:0,rot:0,spinning:false,pool:T.map(()=>[]),done:T.map(()=>0),cur:null};
+const $=id=>document.getElementById(id);
+const pt=(r,a)=>[(r*Math.sin(a*Math.PI/180)).toFixed(1),(-r*Math.cos(a*Math.PI/180)).toFixed(1)];
+function build(){
+ let s='<circle r="203" fill="var(--ink)"/>';
+ T.forEach((t,i)=>{
+  const a0=i*SEG,a1=a0+SEG,[x0,y0]=pt(194,a0),[x1,y1]=pt(194,a1);
+  s+=`<path d="M0 0L${x0} ${y0}A194 194 0 0 1 ${x1} ${y1}Z" fill="${t.c}" stroke="var(--bg)" stroke-width="3"/>`;
+  s+=`<text transform="rotate(${a0+SEG/2-90})" x="168" y="7" text-anchor="end" fill="#fff" font-family="Bricolage Grotesque,sans-serif" font-weight="800" font-size="22" stroke="rgba(0,0,0,.35)" stroke-width=".6">${t.n}</text>`;
+ });
+ $("wheel").innerHTML=s;
+ renderDots();idle();
+}
+function renderDots(){
+ $("dots").innerHTML=T.map((t,i)=>`<span class="dot" style="--c:${t.c}"><i></i>${t.n} <em>${st.done[i]}/${t.q.length}</em></span>`).join("");
+ $("sScore").textContent=st.score;$("sTotal").textContent=st.total;$("sStreak").textContent=st.streak;
+}
+function setAccent(c){$("panel").style.setProperty("--accent",c||"var(--line)")}
+function idle(){
+ setAccent();
+ $("panel").innerHTML=`<div class="idle"><h2 style="color:var(--ink)">Toca la ruleta para empezar</h2><p>Cada giro elige uno de estos cinco temas y te hace una pregunta distinta:</p><ul>${T.map(t=>`<li>${t.n}</li>`).join("")}</ul><p>Las preguntas no se repiten hasta completar todas las de cada tema.</p></div>`;
+}
+function spin(){
+ if(st.spinning)return;
+ st.spinning=true;$("spin").disabled=true;
+ st.rot+=360*5+Math.random()*360;
+ $("wheel").style.transform=`rotate(${st.rot}deg)`;
+ const ms=matchMedia("(prefers-reduced-motion:reduce)").matches?500:4700;
+ setTimeout(land,ms);
+}
+function land(){
+ const ang=((360-(st.rot%360))%360);
+ const i=Math.floor(ang/SEG)%N;
+ if(!st.pool[i].length){st.pool[i]=T[i].q.map((_,k)=>k).sort(()=>Math.random()-.5);st.done[i]=0}
+ const q=T[i].q[st.pool[i].pop()];
+ const idx=q.o.map((_,k)=>k).sort(()=>Math.random()-.5);
+ st.cur={i,q,idx};
+ showQ();
+}
+function showQ(){
+ const {i,q,idx}=st.cur,t=T[i];
+ setAccent(t.c);
+ $("panel").innerHTML=`<span class="tag">${t.n}</span><h2>${q.p}</h2><div class="opts">${idx.map(k=>`<button class="opt" data-k="${k}">${q.o[k]}</button>`).join("")}</div><div id="fb"></div>`;
+ document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>answer(+b.dataset.k));
+}
+function answer(k){
+ const {i,q}=st.cur,ok=k===q.a;
+ st.total++;st.done[i]++;ok?(st.score++,st.streak++):st.streak=0;
+ document.querySelectorAll(".opt").forEach(b=>{b.disabled=true;const v=+b.dataset.k;if(v===q.a)b.classList.add("ok");else if(v===k)b.classList.add("bad")});
+ const all=T.every((t,j)=>st.done[j]>=t.q.length&&!st.pool[j].length);
+ $("fb").innerHTML=`<div class="fb"><strong>${ok?"¡Correcto!":"Casi. La respuesta correcta está marcada."}</strong>${q.e}</div><button class="btn" id="next">${all?"Ver resultado":"Girar otra vez"}</button>`;
+ $("next").onclick=()=>{st.spinning=false;$("spin").disabled=false;all?finish():(idle(),spin())};
+ $("next").focus();
+ st.spinning=false;$("spin").disabled=false;
+ renderDots();
+}
+function finish(){
+ const pct=Math.round(st.score/st.total*100);
+ setAccent("var(--ok)");
+ $("panel").innerHTML=`<div class="end"><b>${pct}%</b><h2>Completaste todas las preguntas</h2><p>${st.score} aciertos de ${st.total}. ${pct>=80?"Dominas las fuentes del conocimiento.":pct>=50?"Vas bien; repasa los temas donde fallaste.":"Repasa las definiciones y vuelve a intentarlo."}</p><button class="btn" id="again">Jugar de nuevo</button></div>`;
+ $("again").onclick=()=>{st.score=st.total=st.streak=0;st.pool=T.map(()=>[]);st.done=T.map(()=>0);renderDots();idle()};
+}
+$("spin").onclick=spin;
+build();
+</script>
+</body>
+</html>
